@@ -1,9 +1,12 @@
+using System.Collections.Generic;
+
 namespace Yatzy
 {
     public class Player
     {
         public string? Name { get; set; }
         public int TotalScore { get; set; }
+        public HashSet<string> UsedCategories { get; } = new HashSet<string>();
 
         public Player(string name)
         {
@@ -13,6 +16,14 @@ namespace Yatzy
         public void AddScore(int score)
         {
             TotalScore += score;
+        }
+        public bool HasUsedCategory(string category)
+        {
+            return UsedCategories.Contains(category);
+        }
+        public void UseCategory(string category)
+        {
+            UsedCategories.Add(category);
         }
         public override string ToString()
         {

@@ -118,6 +118,64 @@
                         $"Pair: {pairScore}, Two Pairs: {twoPairsScore}, Chance: {chanceScore}, Three of a Kind: {threeOfAKindScore}, Four of a Kind: {fourOfAKindScore}, " +
                         $"Full House: {fullHouseScore}, Small Straight: {smallStraightScore}, Large Straight: {largeStraightScore}, Yatzy: {yatzyScore}"
                     );
+                    // Print final dice values after last roll
+                    Console.WriteLine("Final Dice Values: " + string.Join(", ", diceSet.GetValues()));
+
+                    // Calculate all possible scores
+                    var allScoreOptions = new Dictionary<string, int>
+                    {
+                        { "Ones", scorer.CalculateOnes(diceSet.GetValues()) },
+                        { "Twos", scorer.CalculateTwos(diceSet.GetValues()) },
+                        { "Threes", scorer.CalculateThrees(diceSet.GetValues()) },
+                        { "Fours", scorer.CalculateFours(diceSet.GetValues()) },
+                        { "Fives", scorer.CalculateFives(diceSet.GetValues()) },
+                        { "Sixes", scorer.CalculateSixes(diceSet.GetValues()) },
+                        { "Pair", scorer.CalculatePair(diceSet.GetValues()) },
+                        { "Two Pairs", scorer.CalculateTwoPairs(diceSet.GetValues()) },
+                        { "Chance", scorer.CalculateChance(diceSet.GetValues()) },
+                        { "Three of a Kind", scorer.CalculateThreeOfAKind(diceSet.GetValues()) },
+                        { "Four of a Kind", scorer.calculateFourOfAKind(diceSet.GetValues()) },
+                        { "Full House", scorer.CalculateFullHouse(diceSet.GetValues()) },
+                        { "Small Straight", scorer.CalculateSmallStraight(diceSet.GetValues()) },
+                        { "Large Straight", scorer.CalculateLargeStraight(diceSet.GetValues()) },
+                        { "Yatzy", scorer.CalculateYatzy(diceSet.GetValues()) }
+                    };
+
+                    // Filter out used categories
+                    var availableScoreOptions = allScoreOptions
+                        .Where(option => !player.HasUsedCategory(option.Key))
+                        .ToList();
+
+                    if (availableScoreOptions.Count == 0)
+                    {
+                        Console.WriteLine("No categories left to score.");
+                        continue;
+                    }
+
+                    // Display available score options
+                    Console.WriteLine("Choose a category to score:");
+                    int optionIndex = 1;
+                    foreach (var option in availableScoreOptions)
+                    {
+                        Console.WriteLine($"{optionIndex}. {option.Key}: {option.Value}");
+                        optionIndex++;
+                    }
+
+                    // Get player's choice
+                    int chosenIndex = 0;
+                    while (chosenIndex < 1 || chosenIndex > availableScoreOptions.Count)
+                    {
+                        Console.Write("Enter the number of your chosen category: ");
+                        string? choiceInput = Console.ReadLine();
+                        int.TryParse(choiceInput, out chosenIndex);
+                    }
+
+                    var chosenCategory = availableScoreOptions[chosenIndex - 1].Key;
+                    var chosenScore = availableScoreOptions[chosenIndex - 1].Value;
+                    player.AddScore(chosenScore);
+                    player.UseCategory(chosenCategory);
+                    Console.WriteLine($"{player.GetName()} scored {chosenScore} points in {chosenCategory}.");
+                    Console.WriteLine($"Total Score: {player.GetTotalScore()}");
                 }
             }
             Console.WriteLine("Game over! Thanks for playing Yatzy.");
